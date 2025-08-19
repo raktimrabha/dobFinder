@@ -19,17 +19,22 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
 }) => {
   const [copied, setCopied] = useState(false);
 
-  const handleCopy = () => {
-    if (dateOfBirth) {
-      navigator.clipboard.writeText(formatDate(dateOfBirth));
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
-    }
+  const handleCopy = (text: string) => {
+    navigator.clipboard.writeText(text);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
   };
 
   if (!dateOfBirth) {
     return null;
   }
+
+  const formattedDate = formatDate(dateOfBirth);
+  const numericDate = dateOfBirth.toLocaleDateString('en-GB', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  }).replace(/\//g, '-');
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
@@ -37,23 +42,45 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
         Date of Birth
       </h2>
 
-      <div className="bg-green-50 rounded-lg p-6 mb-6 border border-green-100">
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-sm font-medium text-green-800 mb-1">
-              Calculated Date of Birth
-            </p>
-            <p className="text-2xl font-bold text-green-900">
-              {formatDate(dateOfBirth)}
-            </p>
+      <div className="space-y-4">
+        <div className="bg-green-50 rounded-lg p-6 border border-green-100">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-green-800 mb-1">
+                Full Date Format
+              </p>
+              <p className="text-2xl font-bold text-green-900">
+                {formattedDate}
+              </p>
+            </div>
+            <button
+              onClick={() => handleCopy(formattedDate)}
+              className="px-4 py-2 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg text-sm font-medium transition-colors"
+              aria-label="Copy full date format"
+            >
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
           </div>
-          <button
-            onClick={handleCopy}
-            className="px-4 py-2 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg text-sm font-medium transition-colors"
-            aria-label="Copy date to clipboard"
-          >
-            {copied ? 'Copied!' : 'Copy'}
-          </button>
+        </div>
+
+        <div className="bg-blue-50 rounded-lg p-6 border border-blue-100">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm font-medium text-blue-800 mb-1">
+                Numeric Format
+              </p>
+              <p className="text-2xl font-bold text-blue-900">
+                {numericDate}
+              </p>
+            </div>
+            <button
+              onClick={() => handleCopy(numericDate)}
+              className="px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg text-sm font-medium transition-colors"
+              aria-label="Copy numeric date format"
+            >
+              {copied ? 'Copied!' : 'Copy'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -93,7 +120,7 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
                 
                 <div className="flex items-center text-gray-500 text-sm mt-4">
                   <ArrowRight className="w-4 h-4 mr-2" />
-                  Final date of birth: {formatDate(dateOfBirth)}
+                  Final date of birth: {formattedDate}
                 </div>
               </div>
             </div>

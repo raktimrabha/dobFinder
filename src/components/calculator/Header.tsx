@@ -4,10 +4,11 @@ import { Calendar } from 'lucide-react';
 interface HeaderProps {
   title: string;
   description: string;
+  className?: string;
 }
 
-export const Header: React.FC<HeaderProps> = ({ title, description }) => (
-  <div className="text-center mb-12">
+export const Header: React.FC<HeaderProps> = ({ title, description, className = '' }) => (
+  <div className={`text-center mb-12 ${className}`}>
     <div 
       className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full mb-4"
       aria-hidden="true"
