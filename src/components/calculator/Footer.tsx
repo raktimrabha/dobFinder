@@ -3,17 +3,16 @@ import { Github, Instagram, CalendarSearch, Globe, Youtube, Linkedin } from 'luc
 
 const currentYear = new Date().getFullYear();
 
-// It's good practice to type your constant arrays for better type safety.
 type SocialLink = {
   name: string;
   href: string;
   icon: JSX.Element;
 };
 
-type PageLink = {
-    name: string;
-    href: string;
-};
+// type PageLink = {
+//     name: string;
+//     href: string;
+// };
 
 const socialLinks: SocialLink[] = [
   {
@@ -45,11 +44,11 @@ const socialLinks: SocialLink[] = [
   }
 ];
 
-const pageLinks: PageLink[] = [
-    { name: "About", href: "#about" },
-    { name: "Privacy Policy", href: "#privacy" },
-    { name: "Contact", href: "#contact" },
-];
+// const pageLinks: PageLink[] = [
+//     { name: "About", href: "#about" },
+//     { name: "Privacy Policy", href: "#privacy" },
+//     { name: "Contact", href: "#contact" },
+// ];
 
 
 const Footer: React.FC = () => (
@@ -110,7 +109,7 @@ const Footer: React.FC = () => (
             </p>
         </div>
         
-        <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+        {/* <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
           {pageLinks.map((link) => (
             <a 
               key={link.name}
@@ -120,7 +119,7 @@ const Footer: React.FC = () => (
               {link.name}
             </a>
           ))}
-        </div>
+        </div> */}
       </div>
     </div>
   </footer>
