@@ -171,8 +171,81 @@ const DateCalculator: React.FC = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Input Section */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+          {/* Results Section - Shows first on mobile */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 lg:order-2">
+            <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center">
+                <ArrowRight className="w-6 h-6 text-green-600 mr-3" />
+                <h2 className="text-2xl font-semibold text-gray-900">Result</h2>
+              </div>
+              {calculationSteps.length > 1 && (
+                <button
+                  onClick={() => setShowSteps(!showSteps)}
+                  className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors duration-200"
+                >
+                  {showSteps ? 'Hide Steps' : 'Show Steps'}
+                </button>
+              )}
+            </div>
+
+            {error ? (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <p className="text-red-700 font-medium">{error}</p>
+              </div>
+            ) : dateOfBirth ? (
+              <div className="space-y-6">
+                {/* Main Result */}
+                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
+                  <div className="text-center">
+                    <p className="text-sm font-medium text-green-700 mb-2">Date of Birth</p>
+                    <p className="text-3xl font-bold text-green-800">
+                      {formatDate(dateOfBirth)}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Calculation Steps */}
+                {showSteps && calculationSteps.length > 1 && (
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <div className="flex items-center mb-3">
+                      <Clock className="w-4 h-4 text-gray-600 mr-2" />
+                      <h3 className="font-medium text-gray-900">Calculation Steps</h3>
+                    </div>
+                    <div className="space-y-3">
+                      {calculationSteps.map((step, index) => (
+                        <div key={index} className="flex items-center space-x-3">
+                          <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-sm font-semibold">
+                            {step.step}
+                          </div>
+                          <div className="flex-1">
+                            <p className="font-medium text-gray-900">{step.date}</p>
+                            <p className="text-sm text-gray-600">{step.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Additional Info */}
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <h3 className="font-medium text-blue-900 mb-2">How it works</h3>
+                  <p className="text-sm text-blue-700">
+                    We subtract the age from the reference date, carefully handling month lengths, 
+                    leap years, and date boundaries to ensure accurate calculations.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="text-center py-8 text-gray-500">
+                <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                <p>Enter the details below to calculate the date of birth</p>
+              </div>
+            )}
+          </div>
+
+          {/* Input Section - Shows second on mobile */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100 lg:order-1">
             <div className="flex items-center mb-6">
               <Calculator className="w-6 h-6 text-indigo-600 mr-3" />
               <h2 className="text-2xl font-semibold text-gray-900">Input Details</h2>
@@ -244,79 +317,6 @@ const DateCalculator: React.FC = () => {
                 </p>
               </div>
             </div>
-          </div>
-
-          {/* Results Section */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-            <div className="flex items-center justify-between mb-6">
-              <div className="flex items-center">
-                <ArrowRight className="w-6 h-6 text-green-600 mr-3" />
-                <h2 className="text-2xl font-semibold text-gray-900">Result</h2>
-              </div>
-              {calculationSteps.length > 1 && (
-                <button
-                  onClick={() => setShowSteps(!showSteps)}
-                  className="text-sm font-medium text-indigo-600 hover:text-indigo-700 transition-colors duration-200"
-                >
-                  {showSteps ? 'Hide Steps' : 'Show Steps'}
-                </button>
-              )}
-            </div>
-
-            {error ? (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <p className="text-red-700 font-medium">{error}</p>
-              </div>
-            ) : dateOfBirth ? (
-              <div className="space-y-6">
-                {/* Main Result */}
-                <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 border border-green-200">
-                  <div className="text-center">
-                    <p className="text-sm font-medium text-green-700 mb-2">Date of Birth</p>
-                    <p className="text-3xl font-bold text-green-800">
-                      {formatDate(dateOfBirth)}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Calculation Steps */}
-                {showSteps && calculationSteps.length > 1 && (
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <div className="flex items-center mb-3">
-                      <Clock className="w-4 h-4 text-gray-600 mr-2" />
-                      <h3 className="font-medium text-gray-900">Calculation Steps</h3>
-                    </div>
-                    <div className="space-y-3">
-                      {calculationSteps.map((step, index) => (
-                        <div key={index} className="flex items-center space-x-3">
-                          <div className="w-6 h-6 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center text-sm font-semibold">
-                            {step.step}
-                          </div>
-                          <div className="flex-1">
-                            <p className="font-medium text-gray-900">{step.date}</p>
-                            <p className="text-sm text-gray-600">{step.description}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                )}
-
-                {/* Additional Info */}
-                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <h3 className="font-medium text-blue-900 mb-2">How it works</h3>
-                  <p className="text-sm text-blue-700">
-                    We subtract the age from the reference date, carefully handling month lengths, 
-                    leap years, and date boundaries to ensure accurate calculations.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center py-8 text-gray-500">
-                <Calendar className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                <p>Enter the details above to calculate the date of birth</p>
-              </div>
-            )}
           </div>
         </div>
 
