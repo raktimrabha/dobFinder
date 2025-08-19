@@ -41,16 +41,17 @@ const pageLinks: PageLink[] = [
 
 
 const Footer: React.FC = () => (
-  <footer className="w-full border-t border-gray-200 bg-gray-50 py-12 dark:border-gray-800 dark:bg-gray-900/50">
+  // Updated footer to have a transparent background and a softer border color
+  <footer className="w-full border-t border-indigo-100 bg-transparent py-12">
     <div className="mx-auto max-w-6xl px-6">
       {/* Top section with description and social links */}
       <div className="mb-8 flex flex-col items-start justify-between lg:flex-row lg:items-center">
         <div className="mb-6 lg:mb-0">
-          <h3 className="flex items-center gap-2 text-2xl font-bold text-gray-800 dark:text-gray-100">
-            <CalendarSearch className="h-7 w-7" />
+          <h3 className="flex items-center gap-2 text-2xl font-bold text-gray-800">
+            <CalendarSearch className="h-7 w-7 text-indigo-500" />
             <span>DOB Finder</span>
           </h3>
-          <p className="mt-2 max-w-md text-gray-600 dark:text-gray-400">
+          <p className="mt-2 max-w-md text-gray-600">
             Quickly and accurately find the date of birth from any age. Our simple tool makes age and date calculations effortless.
           </p>
         </div>
@@ -63,7 +64,8 @@ const Footer: React.FC = () => (
               target="_blank"
               rel="noopener noreferrer"
               aria-label={link.name}
-              className="rounded-lg bg-gray-200 p-2 text-gray-700 transition-colors hover:bg-blue-600 hover:text-white dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-blue-500"
+              // Updated social link style to blend with the gradient background
+              className="rounded-lg bg-white/70 p-2 text-gray-700 shadow-sm backdrop-blur-sm transition-colors hover:bg-blue-600 hover:text-white"
             >
               {link.icon}
             </a>
@@ -72,15 +74,15 @@ const Footer: React.FC = () => (
       </div>
 
       {/* Bottom section with copyright and page links */}
-      <div className="flex flex-col items-center justify-between border-t border-gray-200 pt-8 dark:border-gray-700 md:flex-row">
+      <div className="flex flex-col items-center justify-between border-t border-indigo-100 pt-8 md:flex-row">
         <div className="mb-4 text-center text-sm md:mb-0 md:text-left">
-            <p className="flex flex-wrap items-center justify-center gap-1 text-gray-500 dark:text-gray-400">
+            <p className="flex flex-wrap items-center justify-center gap-1 text-gray-500">
                 &copy; {currentYear} DOB Finder. Made by
                 <a 
                     href="https://www.raktimrabha.com" 
                     target="_blank" 
                     rel="noopener noreferrer" 
-                    className="group inline-flex items-center font-medium text-blue-600 transition-colors hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+                    className="group inline-flex items-center font-medium text-blue-600 transition-colors hover:text-blue-500"
                 >
                     @raktimrabha
                     <svg 
@@ -101,7 +103,7 @@ const Footer: React.FC = () => (
             <a 
               key={link.name}
               href={link.href}
-              className="text-sm text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
+              className="text-sm text-gray-600 transition-colors hover:text-gray-900"
             >
               {link.name}
             </a>
