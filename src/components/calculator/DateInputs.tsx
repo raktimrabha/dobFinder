@@ -20,70 +20,63 @@ export const DateInputs: React.FC<DateInputsProps> = ({
   onCalculate,
   error,
 }) => {
-  const [localDate, setLocalDate] = useState(referenceDate);
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [dateParts, setDateParts] = useState({
+    day: '',
+    month: '',
+    year: ''
+  });
 
-  // Format date to DD-MM-YYYY
-  const formatDateForDisplay = (date: string) => {
-    if (!date) return '';
-    const [year, month, day] = date.split('-');
-    if (year && month && day) {
-      return `${day.padStart(2, '0')}-${month.padStart(2, '0')}-${year}`;
-    }
-    return date;
-  };
-
-  // Parse DD-MM-YYYY to YYYY-MM-DD for the date input
-  const parseDateInput = (input: string): string => {
-    const [day, month, year] = input.split('-').map(Number);
-    if (day && month && year) {
-      const date = new Date(year, month - 1, day);
-      if (!isNaN(date.getTime())) {
-        return date.toISOString().split('T')[0]; // Returns YYYY-MM-DD
-      }
-    }
-    return '';
-  };
-
-  const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setLocalDate(value);
-    
-    // Validate the date format (DD-MM-YYYY)
-    const dateRegex = /^\d{2}-\d{2}-\d{4}$/;
-    if (dateRegex.test(value)) {
-      const formattedDate = parseDateInput(value);
-      if (formattedDate) {
-        setReferenceDate(formattedDate);
-      }
-    }
-  };
-
-  const handleFocus = () => {
-    // Show the date picker on mobile when input is focused
-    if ('max' in document.createElement('input')) {
-      setShowDatePicker(false);
-    }
-  };
-
-  const toggleDatePicker = () => {
-    setShowDatePicker(!showDatePicker);
-    // If switching to text input and we have a valid date, format it for display
-    if (showDatePicker && referenceDate) {
-      setLocalDate(formatDateForDisplay(referenceDate));
-    }
-  };
-
-  const handleDatePickerChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setReferenceDate(e.target.value);
-  };
-
-  // Update local date when reference date changes from outside
+  // Initialize date parts when referenceDate changes
   useEffect(() => {
     if (referenceDate) {
-      setLocalDate(formatDateForDisplay(referenceDate));
+      const [year, month, day] = referenceDate.split('-').map(Number);
+      if (year && month && day) {
+        setDateParts({
+          day: day.toString().padStart(2, '0'),
+          month: month.toString().padStart(2, '0'),
+          year: year.toString()
+        });
+      }
     }
   }, [referenceDate]);
+
+  // Handle changes to date part inputs
+  const handleDatePartChange = (part: 'day' | 'month' | 'year', value: string) => {
+    // Only allow numbers and limit length
+    if (value && !/^\d*$/.test(value)) return;
+    
+    // Apply max length limits
+    if (part === 'day' && value.length > 2) return;
+    if (part === 'month' && value.length > 2) return;
+    if (part === 'year' && value.length > 4) return;
+
+    const newDateParts = {
+      ...dateParts,
+      [part]: value
+    };
+    
+    setDateParts(newDateParts);
+    
+    // Only update the reference date if we have all parts
+    if (newDateParts.day && newDateParts.month && newDateParts.year) {
+      const day = parseInt(newDateParts.day, 10);
+      const month = parseInt(newDateParts.month, 10);
+      const year = parseInt(newDateParts.year, 10);
+      
+      // Basic date validation
+      if (day > 0 && day <= 31 && month > 0 && month <= 12 && year > 1900 && year < 2100) {
+        const date = new Date(year, month - 1, day);
+        if (!isNaN(date.getTime())) {
+          const formattedDate = date.toISOString().split('T')[0];
+          setReferenceDate(formattedDate);
+          return;
+        }
+      }
+    }
+    
+    // If we get here, the date is invalid or incomplete
+    setReferenceDate('');
+  };
 
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
@@ -100,45 +93,60 @@ export const DateInputs: React.FC<DateInputsProps> = ({
 
       <div className="space-y-6">
         <div>
-          <label 
-            htmlFor="reference-date"
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
+          <label className="block text-lg font-medium text-gray-700 mb-2">
             Reference Date
           </label>
-          <div className="relative">
-            <div className="flex items-center">
+          <div className="grid grid-cols-4 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                Day
+              </label>
               <input
-                id="reference-date"
-                type={showDatePicker ? 'date' : 'text'}
-                value={showDatePicker ? referenceDate : localDate}
-                onChange={showDatePicker ? handleDatePickerChange : handleDateChange}
-                onFocus={handleFocus}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                aria-required="true"
-                aria-label="Enter reference date (DD-MM-YYYY)"
-                placeholder="DD-MM-YYYY"
-                pattern="\d{2}-\d{2}-\d{4}"
+                type="text"
+                value={dateParts.day}
+                onChange={(e) => handleDatePartChange('day', e.target.value)}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
+                placeholder="DD"
+                maxLength={2}
+                inputMode="numeric"
               />
-              <button
-                type="button"
-                onClick={toggleDatePicker}
-                className="ml-2 p-2 text-gray-500 hover:text-gray-700 focus:outline-none"
-                aria-label={showDatePicker ? 'Switch to text input' : 'Open date picker'}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </button>
             </div>
-            <p className="mt-1 text-xs text-gray-500">
-              Format: DD-MM-YYYY
-            </p>
+            <div>
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                Month
+              </label>
+              <input
+                type="text"
+                value={dateParts.month}
+                onChange={(e) => handleDatePartChange('month', e.target.value)}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
+                placeholder="MM"
+                maxLength={2}
+                inputMode="numeric"
+              />
+            </div>
+            <div className="col-span-2">
+              <label className="block text-xs font-medium text-gray-500 mb-1">
+                Year
+              </label>
+              <input
+                type="text"
+                value={dateParts.year}
+                onChange={(e) => handleDatePartChange('year', e.target.value)}
+                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
+                placeholder="YYYY"
+                maxLength={4}
+                inputMode="numeric"
+              />
+            </div>
           </div>
+          <p className="mt-1 text-xs text-gray-500">
+            Format: DD MM YYYY
+          </p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-lg font-medium text-gray-700 mb-2">
             Age at Reference Date
           </label>
           <p className="text-xs text-gray-500 mb-3">
