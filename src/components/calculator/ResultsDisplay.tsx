@@ -85,42 +85,58 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
       </div>
 
       {calculationSteps.length > 0 && (
-        <div>
+        <div className="mt-8">
           <button
             onClick={() => setShowSteps(!showSteps)}
-            className="flex items-center text-indigo-600 hover:text-indigo-800 text-sm font-medium mb-4"
+            className="flex items-center py-2 px-4 -ml-2 text-indigo-600 hover:bg-indigo-50 rounded-lg text-sm font-medium mb-2 transition-colors"
             aria-expanded={showSteps}
             aria-controls="calculation-steps"
           >
             <Clock className="w-4 h-4 mr-2" />
-            {showSteps ? 'Hide calculation steps' : 'Show calculation steps'}
+            {showSteps ? 'Hide calculation details' : 'Show calculation details'}
           </button>
 
           {showSteps && (
-            <div id="calculation-steps" className="space-y-4">
-              <h3 className="font-medium text-gray-900">
-                How we calculated this:
+            <div id="calculation-steps" className="bg-gray-50 rounded-xl p-6 border border-gray-200">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+                <svg className="w-5 h-5 text-indigo-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                </svg>
+                How We Calculated This
               </h3>
-              <div className="space-y-3">
+              <div className="space-y-4">
                 {calculationSteps.map((step, index) => (
-                  <div key={index} className="flex items-start">
-                    <div className="flex-shrink-0 flex items-center justify-center w-6 h-6 rounded-full bg-indigo-100 text-indigo-700 text-xs font-medium mr-3 mt-0.5">
+                  <div key={index} className="flex items-start group">
+                    <div className="flex-shrink-0 flex items-center justify-center w-8 h-8 rounded-full bg-white border-2 border-indigo-100 text-indigo-700 text-sm font-semibold mr-4 shadow-sm group-hover:bg-indigo-50 transition-colors">
                       {step.step}
                     </div>
-                    <div>
-                      <p className="text-sm text-gray-600">
+                    <div className="flex-1">
+                      <p className="text-sm text-gray-700 font-medium">
                         {step.description}
+                        {step.description.includes('leap year') && (
+                          <span className="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-800 text-xs rounded-full">
+                            Leap Year
+                          </span>
+                        )}
                       </p>
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-gray-500 mt-1 font-mono">
                         {step.date}
                       </p>
+                      {step.note && (
+                        <p className="text-xs text-gray-500 mt-1 italic">
+                          {step.note}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
                 
-                <div className="flex items-center text-gray-500 text-sm mt-4">
-                  <ArrowRight className="w-4 h-4 mr-2" />
-                  Final date of birth: {formattedDate}
+                <div className="flex items-center text-gray-700 text-sm mt-6 pt-4 border-t border-gray-200">
+                  <ArrowRight className="w-5 h-5 text-green-600 mr-2" />
+                  <span className="font-medium">Final date of birth:</span>
+                  <span className="ml-2 font-mono bg-gray-100 px-2 py-1 rounded">
+                    {formattedDate}
+                  </span>
                 </div>
               </div>
             </div>

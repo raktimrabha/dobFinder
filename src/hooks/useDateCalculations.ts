@@ -38,7 +38,8 @@ export const useDateCalculations = () => {
     steps.push({
       step: '1',
       date: formatDate(new Date(currentYear, currentMonth, currentDay)),
-      description: 'Starting with reference date'
+      description: 'Starting with reference date',
+      note: isLeapYear(currentYear) ? 'This is a leap year' : 'This is not a leap year'
     });
 
     const years = ageInput.years || 0;
@@ -48,10 +49,13 @@ export const useDateCalculations = () => {
     // Subtract years
     if (years > 0) {
       currentYear -= years;
+      const isLeap = isLeapYear(currentYear);
+      
       steps.push({
         step: '2',
         date: formatDate(new Date(currentYear, currentMonth, currentDay)),
-        description: `Subtracted ${years} year${years === 1 ? '' : 's'}`
+        description: `Subtracted ${years} year${years === 1 ? '' : 's'}`,
+        note: isLeap ? `${currentYear} is a leap year (February has 29 days)` : `${currentYear} is not a leap year`
       });
     }
 
@@ -66,37 +70,60 @@ export const useDateCalculations = () => {
       
       // Handle day overflow for shorter months
       const daysInNewMonth = getDaysInMonth(currentYear, currentMonth);
+      const monthName = new Date(2000, currentMonth, 1).toLocaleString('default', { month: 'long' });
+      const isLeap = isLeapYear(currentYear);
+      
+      if (currentDay > daysInNewMonth) {
+        steps.push({
+          step: '3',
+          date: formatDate(new Date(currentYear, currentMonth, daysInNewMonth)),
+          description: `Adjusted day to ${daysInNewMonth} (${monthName} has ${daysInNewMonth} days${isLeap && currentMonth === 1 ? ' in a leap year' : ''})`
+        });
+      }
+      
       currentDay = Math.min(currentDay, daysInNewMonth);
       
       steps.push({
-        step: '3',
+        step: '4',
         date: formatDate(new Date(currentYear, currentMonth, currentDay)),
-        description: `Subtracted ${months} month${months === 1 ? '' : 's'}`
+        description: `Subtracted ${months} month${months === 1 ? '' : 's'} to ${monthName}`,
+        note: isLeap ? `${currentYear} is a leap year` : ''
       });
     }
 
     // Subtract days
     if (days > 0) {
+      const startDate = new Date(currentYear, currentMonth, currentDay);
       currentDay -= days;
       
       while (currentDay <= 0) {
-        currentMonth -= 1;
-        if (currentMonth < 0) {
-          currentMonth = 11;
+        const prevMonth = currentMonth - 1;
+        const daysInPrevMonth = getDaysInMonth(
+          prevMonth < 0 ? currentYear - 1 : currentYear,
+          prevMonth < 0 ? 11 : prevMonth
+        );
+        
+        currentDay += daysInPrevMonth;
+        currentMonth = prevMonth < 0 ? 11 : prevMonth;
+        if (prevMonth < 0) {
           currentYear -= 1;
         }
-        currentDay += getDaysInMonth(currentYear, currentMonth);
       }
       
+      const endDate = new Date(currentYear, currentMonth, currentDay);
+      const daysSubtracted = Math.round((startDate.getTime() - endDate.getTime()) / (1000 * 60 * 60 * 24));
+      const isLeap = isLeapYear(currentYear);
+      
       steps.push({
-        step: '4',
-        date: formatDate(new Date(currentYear, currentMonth, currentDay)),
-        description: `Subtracted ${days} day${days === 1 ? '' : 's'}`
+        step: '5',
+        date: formatDate(endDate),
+        description: `Subtracted ${daysSubtracted} day${daysSubtracted === 1 ? '' : 's'}`,
+        note: isLeap ? `${currentYear} is a leap year (February has 29 days)` : ''
       });
     }
 
     return { dob: new Date(currentYear, currentMonth, currentDay), steps };
-  }, [formatDate, getDaysInMonth]);
+  }, [formatDate, getDaysInMonth, isLeapYear]);
 
   const handleAgeChange = useCallback((field: keyof AgeInput, value: string) => {
     const numValue = value === '' ? '' : Math.max(0, parseInt(value, 10));

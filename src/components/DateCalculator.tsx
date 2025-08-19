@@ -23,7 +23,11 @@ const DateCalculator: React.FC = () => {
 
   // Set initial reference date to today when component mounts
   useEffect(() => {
-    const today = new Date().toISOString().split('T')[0];
+    // Get current date in local timezone and format as YYYY-MM-DD
+    const now = new Date();
+    const offset = now.getTimezoneOffset();
+    const localDate = new Date(now.getTime() - (offset * 60 * 1000));
+    const today = localDate.toISOString().split('T')[0];
     setReferenceDate(today);
   }, [setReferenceDate]);
 

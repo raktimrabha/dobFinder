@@ -8,6 +8,7 @@ export interface CalculationStep {
   step: string;
   date: string;
   description: string;
+  note?: string;
 }
 
 export interface DateCalculations {
