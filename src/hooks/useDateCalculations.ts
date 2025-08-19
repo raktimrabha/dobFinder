@@ -87,7 +87,7 @@ export const useDateCalculations = () => {
         step: '4',
         date: formatDate(new Date(currentYear, currentMonth, currentDay)),
         description: `Subtracted ${months} month${months === 1 ? '' : 's'} to ${monthName}`,
-        note: isLeap ? `${currentYear} is a leap year` : ''
+        note: isLeap ? `${currentYear} is a leap year (February has 29 days)` : ''
       });
     }
 
