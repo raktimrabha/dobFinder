@@ -101,6 +101,11 @@ export const DateInputs: React.FC<DateInputsProps> = ({
     }
   };
 
+  // Handle input focus - select all text
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+    e.target.select();
+  };
+
   return (
     <div className="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
       <h2 className="text-2xl font-semibold text-gray-900 mb-6">
@@ -162,6 +167,7 @@ export const DateInputs: React.FC<DateInputsProps> = ({
                   type="text"
                   value={dateParts.day}
                   onChange={(e) => handleDatePartChange('day', e.target.value)}
+                  onFocus={handleFocus}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
                   placeholder="DD"
                   maxLength={2}
@@ -176,6 +182,7 @@ export const DateInputs: React.FC<DateInputsProps> = ({
                   type="text"
                   value={dateParts.month}
                   onChange={(e) => handleDatePartChange('month', e.target.value)}
+                  onFocus={handleFocus}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
                   placeholder="MM"
                   maxLength={2}
@@ -190,6 +197,7 @@ export const DateInputs: React.FC<DateInputsProps> = ({
                   type="text"
                   value={dateParts.year}
                   onChange={(e) => handleDatePartChange('year', e.target.value)}
+                  onFocus={handleFocus}
                   className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
                   placeholder="YYYY"
                   maxLength={4}
@@ -225,6 +233,7 @@ export const DateInputs: React.FC<DateInputsProps> = ({
                 min="0"
                 value={age.years}
                 onChange={(e) => handleAgeChange('years', e.target.value)}
+                onFocus={handleFocus}
                 onBlur={handleNormalizeAge}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
                 placeholder="0"
@@ -244,6 +253,7 @@ export const DateInputs: React.FC<DateInputsProps> = ({
                 min="0"
                 value={age.months}
                 onChange={(e) => handleAgeChange('months', e.target.value)}
+                onFocus={handleFocus}
                 onBlur={handleNormalizeAge}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
                 placeholder="0"
@@ -263,6 +273,7 @@ export const DateInputs: React.FC<DateInputsProps> = ({
                 min="0"
                 value={age.days}
                 onChange={(e) => handleAgeChange('days', e.target.value)}
+                onFocus={handleFocus}
                 onBlur={handleNormalizeAge}
                 className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
                 placeholder="0"

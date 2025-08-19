@@ -1,5 +1,5 @@
 import React from 'react';
-import { Github, Instagram, Mail, CalendarSearch } from 'lucide-react';
+import { Github, Instagram, Mail, CalendarSearch, Linkedin, Youtube } from 'lucide-react';
 
 const currentYear = new Date().getFullYear();
 
@@ -31,6 +31,18 @@ const socialLinks: SocialLink[] = [
     href: 'mailto:nidoyakico@gmail.com',
     icon: <Mail className="h-5 w-5" />,
   },
+
+  { 
+    name: 'LinkedIn',
+    href: "https://linkedin.com/in/raktimrabha", 
+    icon: <Linkedin className="w-5 h-5" /> 
+  },
+
+  { 
+    name: 'Youtube',
+    href: "https://youtube.com/@raktimrabha", 
+    icon: <Youtube className="w-5 h-5" /> 
+  }
 ];
 
 const pageLinks: PageLink[] = [
