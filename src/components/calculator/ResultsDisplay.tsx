@@ -17,12 +17,12 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
   setShowSteps,
   formatDate,
 }) => {
-  const [copied, setCopied] = useState(false);
+  const [copiedButton, setCopiedButton] = useState<string | null>(null);
 
-  const handleCopy = (text: string) => {
+  const handleCopy = (text: string, buttonId: string) => {
     navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setCopiedButton(buttonId);
+    setTimeout(() => setCopiedButton(null), 2000);
   };
 
   if (!dateOfBirth) {
@@ -54,11 +54,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               </p>
             </div>
             <button
-              onClick={() => handleCopy(formattedDate)}
+              onClick={() => handleCopy(formattedDate, 'full')}
               className="px-4 py-2 bg-green-100 hover:bg-green-200 text-green-800 rounded-lg text-sm font-medium transition-colors"
               aria-label="Copy full date format"
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {copiedButton === 'full' ? 'Copied!' : 'Copy'}
             </button>
           </div>
         </div>
@@ -74,11 +74,11 @@ export const ResultsDisplay: React.FC<ResultsDisplayProps> = ({
               </p>
             </div>
             <button
-              onClick={() => handleCopy(numericDate)}
+              onClick={() => handleCopy(numericDate, 'numeric')}
               className="px-4 py-2 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-lg text-sm font-medium transition-colors"
               aria-label="Copy numeric date format"
             >
-              {copied ? 'Copied!' : 'Copy'}
+              {copiedButton === 'numeric' ? 'Copied!' : 'Copy'}
             </button>
           </div>
         </div>
