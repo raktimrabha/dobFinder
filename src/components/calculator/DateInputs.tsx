@@ -25,6 +25,20 @@ export const DateInputs: React.FC<DateInputsProps> = ({
     month: '',
     year: ''
   });
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  // Toggle between calendar and manual input
+  const toggleCalendar = () => {
+    setShowCalendar(!showCalendar);
+  };
+
+  // Handle calendar date change
+  const handleCalendarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const date = e.target.value;
+    if (date) {
+      setReferenceDate(date);
+    }
+  };
 
   // Initialize date parts when referenceDate changes
   useEffect(() => {
@@ -95,51 +109,72 @@ export const DateInputs: React.FC<DateInputsProps> = ({
         <div>
           <label className="block text-lg font-medium text-gray-700 mb-2">
             Reference Date
+            <button
+              type="button"
+              onClick={toggleCalendar}
+              className="ml-2 text-sm font-normal text-indigo-600 hover:text-indigo-800 focus:outline-none"
+              aria-label={showCalendar ? 'Switch to manual input' : 'Open calendar'}
+            >
+              {showCalendar ? 'Enter manually' : 'Use calendar'}
+            </button>
           </label>
-          <div className="grid grid-cols-4 gap-3">
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">
-                Day
-              </label>
+          
+          {showCalendar ? (
+            <div className="mb-4">
               <input
-                type="text"
-                value={dateParts.day}
-                onChange={(e) => handleDatePartChange('day', e.target.value)}
-                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
-                placeholder="DD"
-                maxLength={2}
-                inputMode="numeric"
+                type="date"
+                value={referenceDate}
+                onChange={handleCalendarChange}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
+                max={new Date().toISOString().split('T')[0]}
               />
             </div>
-            <div>
-              <label className="block text-xs font-medium text-gray-500 mb-1">
-                Month
-              </label>
-              <input
-                type="text"
-                value={dateParts.month}
-                onChange={(e) => handleDatePartChange('month', e.target.value)}
-                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
-                placeholder="MM"
-                maxLength={2}
-                inputMode="numeric"
-              />
+          ) : (
+            <div className="grid grid-cols-4 gap-3 mb-4">
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Day
+                </label>
+                <input
+                  type="text"
+                  value={dateParts.day}
+                  onChange={(e) => handleDatePartChange('day', e.target.value)}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
+                  placeholder="DD"
+                  maxLength={2}
+                  inputMode="numeric"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Month
+                </label>
+                <input
+                  type="text"
+                  value={dateParts.month}
+                  onChange={(e) => handleDatePartChange('month', e.target.value)}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
+                  placeholder="MM"
+                  maxLength={2}
+                  inputMode="numeric"
+                />
+              </div>
+              <div className="col-span-2">
+                <label className="block text-xs font-medium text-gray-500 mb-1">
+                  Year
+                </label>
+                <input
+                  type="text"
+                  value={dateParts.year}
+                  onChange={(e) => handleDatePartChange('year', e.target.value)}
+                  className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
+                  placeholder="YYYY"
+                  maxLength={4}
+                  inputMode="numeric"
+                />
+              </div>
             </div>
-            <div className="col-span-2">
-              <label className="block text-xs font-medium text-gray-500 mb-1">
-                Year
-              </label>
-              <input
-                type="text"
-                value={dateParts.year}
-                onChange={(e) => handleDatePartChange('year', e.target.value)}
-                className="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-center text-lg font-semibold"
-                placeholder="YYYY"
-                maxLength={4}
-                inputMode="numeric"
-              />
-            </div>
-          </div>
+          )}
           <p className="mt-1 text-xs text-gray-500">
             Format: DD MM YYYY
           </p>

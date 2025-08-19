@@ -44,7 +44,7 @@ const DateCalculator: React.FC = () => {
         <div className="w-full max-w-2xl mx-auto">
           <Header 
             title="DOB Finder"
-            description="Calculate someone's date of birth by entering a reference date and their age at that time"
+            description="Find someone's date of birth by entering a reference date and their age at that time"
             className="text-center mb-8"
           />
           
