@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { AgeInput } from '../../types';
 
+// Assuming AgeInput is defined in your types file, e.g.:
+// export interface AgeInput {
+//   years: string;
+//   months: string;
+//   days: string;
+// }
+
 interface DateInputsProps {
   referenceDate: string;
   setReferenceDate: (date: string) => void;
@@ -25,38 +32,35 @@ export const DateInputs: React.FC<DateInputsProps> = ({
     month: '',
     year: ''
   });
-  const [showCalendar, setShowCalendar] = useState(false);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
-  // Toggle between calendar and manual input
-  const toggleCalendar = () => {
-    setShowCalendar(!showCalendar);
+  // Toggle date picker visibility
+  const toggleDatePicker = () => {
+    setShowDatePicker(!showDatePicker);
   };
 
-  // Handle calendar date change
+  // Handle date selection from the calendar
   const handleCalendarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const date = e.target.value;
-    if (date) {
-      setReferenceDate(date);
+    const selectedDate = e.target.value;
+    if (selectedDate) {
+      setReferenceDate(selectedDate);
     }
   };
 
-  // Initialize date parts when referenceDate changes
+  // **FIXED**: Simplified useEffect to sync state from the referenceDate prop.
+  // The referenceDate string ("YYYY-MM-DD") already has the correctly formatted parts.
   useEffect(() => {
     if (referenceDate) {
-      const [year, month, day] = referenceDate.split('-').map(Number);
+      const [year, month, day] = referenceDate.split('-');
       if (year && month && day) {
-        setDateParts({
-          day: day.toString().padStart(2, '0'),
-          month: month.toString().padStart(2, '0'),
-          year: year.toString()
-        });
+        setDateParts({ day, month, year });
       }
     }
   }, [referenceDate]);
 
   // Handle changes to date part inputs
   const handleDatePartChange = (part: 'day' | 'month' | 'year', value: string) => {
-    // Only allow numbers and limit length
+    // Only allow numbers
     if (value && !/^\d*$/.test(value)) return;
     
     // Apply max length limits
@@ -64,32 +68,37 @@ export const DateInputs: React.FC<DateInputsProps> = ({
     if (part === 'month' && value.length > 2) return;
     if (part === 'year' && value.length > 4) return;
 
+    // Update the specific part in local state for immediate UI feedback
     const newDateParts = {
       ...dateParts,
       [part]: value
     };
-    
     setDateParts(newDateParts);
     
-    // Only update the reference date if we have all parts
-    if (newDateParts.day && newDateParts.month && newDateParts.year) {
+    // Attempt to form a full date and update the parent state
+    if (newDateParts.day && newDateParts.month && newDateParts.year && newDateParts.year.length === 4) {
       const day = parseInt(newDateParts.day, 10);
       const month = parseInt(newDateParts.month, 10);
       const year = parseInt(newDateParts.year, 10);
       
-      // Basic date validation
+      // Basic validation
       if (day > 0 && day <= 31 && month > 0 && month <= 12 && year > 1900 && year < 2100) {
-        const date = new Date(year, month - 1, day);
-        if (!isNaN(date.getTime())) {
-          const formattedDate = date.toISOString().split('T')[0];
+        // Get the last day of the month to handle clamping (e.g., Feb 31 -> Feb 29)
+        const daysInMonth = new Date(year, month, 0).getDate();
+        const validDay = Math.min(day, daysInMonth);
+        
+        // **FIX**: Use Date.UTC() to create a date in UTC. This prevents the user's
+        // local timezone from causing a date shift when converting to an ISO string.
+        const newDate = new Date(Date.UTC(year, month - 1, validDay));
+        
+        // Ensure the constructed date is valid
+        if (!isNaN(newDate.getTime())) {
+          // Format to "YYYY-MM-DD"
+          const formattedDate = newDate.toISOString().split('T')[0];
           setReferenceDate(formattedDate);
-          return;
         }
       }
     }
-    
-    // If we get here, the date is invalid or incomplete
-    setReferenceDate('');
   };
 
   return (
@@ -107,30 +116,44 @@ export const DateInputs: React.FC<DateInputsProps> = ({
 
       <div className="space-y-6">
         <div>
-          <label className="block text-lg font-medium text-gray-700 mb-2">
-            Reference Date
+          <div className="flex justify-between items-center mb-2">
+            <label className="block text-lg font-medium text-gray-700">
+              Reference Date
+            </label>
             <button
               type="button"
-              onClick={toggleCalendar}
-              className="ml-2 text-sm font-normal text-indigo-600 hover:text-indigo-800 focus:outline-none"
-              aria-label={showCalendar ? 'Switch to manual input' : 'Open calendar'}
+              onClick={toggleDatePicker}
+              className="text-sm text-indigo-600 hover:text-indigo-800 flex items-center"
             >
-              {showCalendar ? 'Enter manually' : 'Use calendar'}
+              {showDatePicker ? 'Enter Manually' : 'Use Calendar'}
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                className="h-4 w-4 ml-1" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                />
+              </svg>
             </button>
-          </label>
+          </div>
           
-          {showCalendar ? (
+          {showDatePicker ? (
             <div className="mb-4">
               <input
                 type="date"
                 value={referenceDate}
                 onChange={handleCalendarChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200"
-                max={new Date().toISOString().split('T')[0]}
               />
             </div>
           ) : (
-            <div className="grid grid-cols-4 gap-3 mb-4">
+            <div className="grid grid-cols-4 gap-3">
               <div>
                 <label className="block text-xs font-medium text-gray-500 mb-1">
                   Day
@@ -176,7 +199,7 @@ export const DateInputs: React.FC<DateInputsProps> = ({
             </div>
           )}
           <p className="mt-1 text-xs text-gray-500">
-            Format: DD MM YYYY
+            {showDatePicker ? 'Select a date' : 'Format: DD MM YYYY'}
           </p>
         </div>
 
