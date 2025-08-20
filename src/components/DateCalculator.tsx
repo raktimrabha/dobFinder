@@ -25,9 +25,10 @@ const DateCalculator: React.FC = () => {
   useEffect(() => {
     // Get current date in local timezone and format as YYYY-MM-DD
     const now = new Date();
-    const offset = now.getTimezoneOffset();
-    const localDate = new Date(now.getTime() - (offset * 60 * 1000));
-    const today = localDate.toISOString().split('T')[0];
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const today = `${year}-${month}-${day}`;
     setReferenceDate(today);
   }, [setReferenceDate]);
 
